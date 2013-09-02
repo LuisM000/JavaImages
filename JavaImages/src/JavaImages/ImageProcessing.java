@@ -1,4 +1,3 @@
-
 package JavaImages;
 
 import java.awt.image.BufferedImage;
@@ -15,10 +14,20 @@ public class ImageProcessing {
         static private String status;
         static private ArrayList<String> allStatus=new ArrayList<>();
         static private BufferedImage currentImage;
-        static private ArrayList<BufferedImage> allImages=new ArrayList<>();;
+        static private ArrayList<BufferedImage> allImages=new ArrayList<>();
         static private ArrayList<String> activityLog=new ArrayList<>();
+        static private String infolastOpenedImage;
+        static private BufferedImage lastOpenedImage;
+        static private ArrayList<String> allInfoOpenedImages=new ArrayList<>();
+        static private ArrayList<BufferedImage> allOpenedImages=new ArrayList<>();
+        static private int counterOpenedImages=-1;
         static private int counterImages=-1;
         static private JTextArea txtArea;
+        /**
+        * Enumeration with the file extensions
+        */
+        public enum imageFormat{all,all_images,bmp,gif,jpg,png}
+
                
     
     private boolean checkingSize(ArrayList arrayChecking){
@@ -71,15 +80,52 @@ public class ImageProcessing {
         return allImages;
     }
      
-        /**
+    /**
      * @return a Arraylist<String> that contains all states and errors processed
      */
     public ArrayList<String> getActivityLog() {
         return activityLog;
     }
     
+    /**
+     * @return a Arraylist<String> that contains all the information of the images open
+     */
+    public static ArrayList<String> getinfoOpenedImages() {
+        return allInfoOpenedImages;
+    }
+
+    /**
+     * @return a Arraylist<BufferedImage> that contains all the images open
+     */
+    public static ArrayList<BufferedImage> getAllOpenedImages() {
+        return allOpenedImages;
+    }
     
-        /**
+    /**
+     * 
+     * @return that contains the last image open by the program.
+     * If no images stored, returns null
+     */
+    //TASK incluir en el registro de actividad que se ha recuperado la imagen?¿?
+    public BufferedImage lastOpenedImage(){
+        if(ImageProcessing.counterOpenedImages>=0){
+           ImageProcessing.lastOpenedImage=ImageProcessing.allOpenedImages.get(ImageProcessing.counterOpenedImages);
+        }
+       return ImageProcessing.lastOpenedImage;
+    }
+    
+   /**
+     * 
+     * @return that contains the last information of the images open
+     */
+    public String lastInfoOpenedImage(){
+        if(ImageProcessing.counterOpenedImages>=0){
+           ImageProcessing.infolastOpenedImage=ImageProcessing.allInfoOpenedImages.get(ImageProcessing.counterOpenedImages);
+        }
+       return ImageProcessing.infolastOpenedImage;
+    }    
+    
+   /**
      * Method that stores all the information about the program, eg errors.
      * Do not use if you have already called the function JavaImages.ImageProcessing.updateImage()
      * @param message String with the information you want to store
@@ -106,7 +152,29 @@ public class ImageProcessing {
         ImageProcessing.counterImages+=1;
     }
     
+    protected void newOpenImage(String infoImage,BufferedImage openedImage){
+        ImageProcessing.allInfoOpenedImages.add(infoImage);
+        ImageProcessing.allOpenedImages.add(openedImage);
+        ImageProcessing.counterOpenedImages+=1;
+    }
     
+    /**
+     * Delete all information stored into the class (images and status). This function 
+     * can´t be undone
+     */
+    public void deleteAllStoredImages(){
+        ImageProcessing.allImages.clear();
+        ImageProcessing.allStatus.clear();
+        ImageProcessing.allOpenedImages.clear();
+        ImageProcessing.allInfoOpenedImages.clear();
+        ImageProcessing.counterImages=-1;
+        ImageProcessing.counterOpenedImages=-1;
+        ImageProcessing.currentImage=null;
+        ImageProcessing.status=null;
+        ImageProcessing.lastOpenedImage=null;
+        ImageProcessing.infolastOpenedImage=null;
+        this.updateActivityLog("Deleted all stored images register");
+    }
    /**
     * method that associates a JTextArea with all the information covered in the class, 
     * for example, information about the processing of the images, errors ...
@@ -114,8 +182,9 @@ public class ImageProcessing {
     * @see JavaImages.ImageProcessing#getActivityLog()
     * @see JavaImages.ImageProcessing#getAllStatus() 
     */
-    public void attachLabelStatus(JTextArea textAreaAttached){
+    public void attachTextAreaStatus(JTextArea textAreaAttached){
         ImageProcessing.txtArea=textAreaAttached;
+        this.updateActivityLog("Attached textArea");
     }
     
     /**
@@ -136,7 +205,7 @@ public class ImageProcessing {
         }
     }
     
-      /**
+   /**
      * Function that returns the next image with respect to the current image
      * @return Next BufferedImage.
      * If no next images return null
@@ -152,8 +221,6 @@ public class ImageProcessing {
         }else{
             return null;
         }
-            
     }
-    
 }
 
