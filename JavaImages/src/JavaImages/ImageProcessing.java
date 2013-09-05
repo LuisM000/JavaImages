@@ -1,5 +1,6 @@
 package JavaImages;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.swing.JTextArea;
@@ -26,7 +27,7 @@ public class ImageProcessing {
         /**
         * Enumeration with the file extensions
         */
-        public enum imageFormat{all,all_images,bmp,gif,jpg,png}
+        static public enum imageFormat{all,all_images,bmp,gif,jpg,png}
 
                
     
@@ -106,10 +107,10 @@ public class ImageProcessing {
      * @return that contains the last image open by the program.
      * If no images stored, returns null
      */
-    //TASK incluir en el registro de actividad que se ha recuperado la imagen?¿?
     public BufferedImage lastOpenedImage(){
         if(ImageProcessing.counterOpenedImages>=0){
            ImageProcessing.lastOpenedImage=ImageProcessing.allOpenedImages.get(ImageProcessing.counterOpenedImages);
+           this.updateImage("Recovered original image",ImageProcessing.lastOpenedImage);
         }
        return ImageProcessing.lastOpenedImage;
     }
@@ -199,6 +200,7 @@ public class ImageProcessing {
         if((ImageProcessing.counterImages)>0){
             ImageProcessing.counterImages-=1;
             ImageProcessing.currentImage=allImages.get(ImageProcessing.counterImages);
+            this.updateActivityLog("Undo image. Information image: " + allStatus.get(ImageProcessing.counterImages) + ")");
             return currentImage;
         }else{
             return null;
@@ -217,10 +219,23 @@ public class ImageProcessing {
         if((ImageProcessing.counterImages)<ImageProcessing.allImages.size()-1){
             ImageProcessing.counterImages+=1;
             ImageProcessing.currentImage=allImages.get(ImageProcessing.counterImages);
+            this.updateActivityLog("Redo image. Information image: " + allStatus.get(ImageProcessing.counterImages) + ")");
             return currentImage;
         }else{
             return null;
         }
+    }
+   
+   protected int colorRGBtoSRGB(Color colorValueRGB){
+        int colorSRGB;
+        colorSRGB=(colorValueRGB.getRed() << 16) | (colorValueRGB.getGreen() << 8) | colorValueRGB.getBlue();
+        return colorSRGB;
+   }
+    
+   protected BufferedImage cloneBufferedImage(BufferedImage bufferImage){
+        BufferedImage copy=new BufferedImage (bufferImage.getWidth(),bufferImage.getHeight(),bufferImage.getType());
+        copy.setData(bufferImage.getData());
+        return copy;
     }
 }
 

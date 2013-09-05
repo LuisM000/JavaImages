@@ -53,27 +53,32 @@ public class ImageProcessing_TransformFormatImages extends ImageProcessing{
       * @return returns an BufferedImage from a Icon
       */
     public BufferedImage iconToBufferedImage(Icon icon){
-      int w = icon.getIconWidth();
-      int h = icon.getIconHeight();
-      GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-      GraphicsDevice gd = ge.getDefaultScreenDevice();
-      GraphicsConfiguration gc = gd.getDefaultConfiguration();
-      BufferedImage bufferImage = gc.createCompatibleImage(w, h);
-      Graphics2D g = bufferImage.createGraphics();
-      icon.paintIcon(null, g, 0, 0);
-      g.dispose();
+      BufferedImage bufferImage=(BufferedImage)this.iconToImage(icon);
       return bufferImage;
     }
     
       /**
-      * Converts a Icon in a Image
+      * Converts a Icon in a Image https://groups.google.com/forum/#!topic/comp.lang.java.programmer/OI_IdebPL68
       * @param icon Icon is going to be transformed
       * @return returns an Image from a Icon
       */
-    public Image iconToImage(Icon icon){
-        Image imgReturn=this.iconToBufferedImage(icon);
-        return imgReturn;
-    }
+    public Image iconToImage(Icon icon) {
+          if (icon instanceof ImageIcon) {
+              return ((ImageIcon)icon).getImage();
+          } else {
+              int w = icon.getIconWidth();
+              int h = icon.getIconHeight();
+              GraphicsEnvironment ge = 
+                GraphicsEnvironment.getLocalGraphicsEnvironment();
+              GraphicsDevice gd = ge.getDefaultScreenDevice();
+              GraphicsConfiguration gc = gd.getDefaultConfiguration();
+              BufferedImage image = gc.createCompatibleImage(w, h);
+              Graphics2D g = image.createGraphics();
+              icon.paintIcon(null, g, 0, 0);
+              g.dispose();
+              return image;
+          }
+      }
     
     /**
     * Converts a Icon in a ImageIcon
@@ -81,7 +86,7 @@ public class ImageProcessing_TransformFormatImages extends ImageProcessing{
     * @return returns an ImageIcon from a Icon
     */
     public ImageIcon iconToImageIcon(Icon icon){
-        ImageIcon imageIconRetur=new ImageIcon((Image)this.iconToBufferedImage(icon));
+        ImageIcon imageIconRetur=new ImageIcon(this.iconToImage(icon));
         return imageIconRetur;
     }
     
