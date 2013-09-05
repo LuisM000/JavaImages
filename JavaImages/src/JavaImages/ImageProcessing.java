@@ -24,6 +24,7 @@ public class ImageProcessing {
         static private int counterOpenedImages=-1;
         static private int counterImages=-1;
         static private JTextArea txtArea;
+        
         /**
         * Enumeration with the file extensions
         */
